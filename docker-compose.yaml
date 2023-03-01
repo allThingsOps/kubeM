@@ -1,0 +1,74 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb-myrocks
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - cacheNet
+    environment:
+      MYSQL_ROOT_PASSWORD: toot
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: password
+      MARIADB_MYSQL_LOCALHOST_GRANTS: 1
+
+  redis-insight:
+    image: redislabs/redisinsight
+    ports:
+      - "8301:8001"
+    volumes:
+      - redisinsight:/db
+    networks:
+      - cacheNet
+
+  redis-enterprise-server:
+    image: redislabs/redis
+    ports:
+      - "8443:8443"
+      - "9443:9443"
+      - "12000:12000"
+    volumes:
+      - redisent:/data
+    networks:
+      - cacheNet
+
+  php:
+    image: php
+    ports:
+      - "8303:80"
+    volumes:
+      - php:/data
+    networks:
+      - cacheNet
+
+  redis-stack-server:
+    image: redis/redis-stack-server
+    command: /bin/bash -c 'redis-stack-server --appendonly yes'
+    sysctls:
+      - net.core.somaxconn=65535
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    networks:
+      - cacheNet
+
+volumes:
+  mariadb:
+    driver: local
+  redisinsight:
+    driver: local
+  redisent:
+    driver: local
+  redis:
+    driver: local
+  php:
+    driver: local
+
+networks:
+  cacheNet:
+    driver: overlay

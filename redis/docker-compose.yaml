@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  redis-stack-server:
+    image: redis/redis-stack-server
+    command: /bin/bash -c 'redis-stack-server --appendonly yes'
+    sysctls:
+      - net.core.somaxconn=65535
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+    networks:
+      - redisnetwork
+
+volumes:
+  redis:
+    driver: local
+
+networks:
+  redisnetwork:
+    driver: overlay
