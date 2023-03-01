@@ -2,5 +2,10 @@
   "name": "php-redis-mysql",
   "lockfileVersion": 2,
   "requires": true,
-  "packages": {}
+  "packages": {},
+  "dependencies": {
+    "ato-cli": "^1.0.5",
+    "precommit": "^1.2.2",
+    "trunk": "^1.1.0"
+  }
 }
